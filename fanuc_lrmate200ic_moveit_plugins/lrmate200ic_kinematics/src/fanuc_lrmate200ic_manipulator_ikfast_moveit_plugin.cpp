@@ -830,7 +830,7 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
 {
   ROS_DEBUG_STREAM_NAMED("ikfast","searchPositionIK");
 
-  ROS_ERROR("searchPositionIK");
+  //ROS_ERROR("searchPositionIK");
   /// search_mode is currently fixed during code generation
   SEARCH_MODE search_mode = OPTIMIZE_MAX_JOINT;
 
@@ -1084,7 +1084,7 @@ bool IKFastKinematicsPlugin::getPositionIK(const geometry_msgs::Pose &ik_pose,
   for(std::size_t i = 0; i < free_params_.size(); ++i)
   {
     int p = free_params_[i];
-    ROS_ERROR("%u is %f",p,ik_seed_state[p]);  // DTC
+    //ROS_ERROR("%u is %f",p,ik_seed_state[p]);  // DTC
     vfree[i] = ik_seed_state[p];
   }
 
@@ -1348,7 +1348,7 @@ bool IKFastKinematicsPlugin::getPositionIKs(const geometry_msgs::Pose &ik_pose,
   for(std::size_t i = 0; i < free_params_.size(); ++i)
   {
     int p = free_params_[i];
-    ROS_ERROR("%u is %f",p,ik_seed_state[p]);  // DTC
+    //ROS_ERROR("%u is %f",p,ik_seed_state[p]);  // DTC
 
     vfree[i] = ik_seed_state[p];
   }
