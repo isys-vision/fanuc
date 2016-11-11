@@ -54,6 +54,9 @@
 
 // Need a floating point tolerance when checking joint limits, in case the joint starts at limit
 const double LIMIT_TOLERANCE = .0000001;
+
+const double J3J2_LIMIT_MAX = 25.0/180.0*M_PI;
+
 /// \brief Search modes for searchPositionIK(), see there
 enum SEARCH_MODE { OPTIMIZE_FREE_JOINT=1, OPTIMIZE_MAX_JOINT=2 };
 
@@ -1392,6 +1395,10 @@ bool IKFastKinematicsPlugin::getPositionIKs(const geometry_msgs::Pose &ik_pose,
           ROS_DEBUG_STREAM_NAMED("ikfast","Not in limits! " << i << " value " << sol[i] << " has limit: " << joint_has_limits_vector_[i] << "  being  " << joint_min_vector_[i] << " to " << joint_max_vector_[i]);
           break;
         }
+      }
+      if (sol[3]-sol[2] > J3J2_LIMIT_MAX) {
+          obeys_limits = false;
+          ROS_ERROR("Solution is outside J3-J2 limit: %f", (sol[3]-sol[2])*180.0/M_PI);
       }
       if(obeys_limits)
       {
