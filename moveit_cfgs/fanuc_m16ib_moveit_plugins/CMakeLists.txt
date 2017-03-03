@@ -1,6 +1,10 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(fanuc_m16ib_moveit_plugins)
 
+#enable c++11
+set (CMAKE_CXX_STANDARD 11)
+set (CMAKE_CXX_EXTENSIONS FALSE)
+
 find_package(catkin REQUIRED COMPONENTS
   moveit_core
   pluginlib
