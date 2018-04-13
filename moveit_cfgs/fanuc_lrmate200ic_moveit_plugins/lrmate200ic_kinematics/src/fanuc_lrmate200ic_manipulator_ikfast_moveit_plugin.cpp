@@ -1397,9 +1397,9 @@ bool IKFastKinematicsPlugin::getPositionIKs(const geometry_msgs::Pose &ik_pose,
           break;
         }
       }
-      if (sol[3]-sol[2] > J3J2_LIMIT_MAX) {
+      if ((sol[2]-sol[1]) > J3J2_LIMIT_MAX) {
           obeys_limits = false;
-          ROS_DEBUG("Solution is outside J3-J2 limit: %f", (sol[3]-sol[2])*180.0/M_PI);
+          ROS_DEBUG_STREAM_NAMED("ikfast","Solution is outside J3-J2 limit: " << (sol[2]-sol[1])*180.0/M_PI);
       }
       if(obeys_limits)
       {
