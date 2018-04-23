@@ -40,10 +40,15 @@
 
 #include <industrial_robot_client/joint_trajectory_streamer.h>
 
+#include <simple_message/joint_traj_pt.h>
+
 #include <stdexcept>
 
 
 using industrial_robot_client::joint_trajectory_streamer::JointTrajectoryStreamer;
+using industrial::joint_traj_pt_message::JointTrajPtMessage;
+typedef industrial::joint_traj_pt::JointTrajPt rbt_JointTrajPt;
+typedef trajectory_msgs::JointTrajectoryPoint  ros_JointTrajPt;
 
 
 class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
@@ -66,6 +71,68 @@ public:
 
   virtual ~Fanuc_JointTrajectoryStreamer() {}
 
+  bool trajectory_to_msgs(const trajectory_msgs::JointTrajectoryConstPtr& traj, std::vector<JointTrajPtMessage>* msgs) override
+  {
+    msgs->clear();
+
+    // check for valid trajectory
+    if (!is_valid(*traj))
+      return false;
+
+    // guestimate velocity if only two points are given
+    double velocity_guess = 0;
+    if (traj->points.size() >= 2) {
+        size_t n = traj->points.size() - 1;
+        double duration = (traj->points[n].time_from_start - traj->points[n-1].time_from_start).toSec();
+        const std::vector<double>& x0 = traj->points[n-1].positions;
+        const std::vector<double>& x1 = traj->points[n].positions;
+        for (int i = 0; i<x1.size(); ++i) {
+            double dx = std::abs(x1[i]-x0[i]);
+            double v = dx/duration;
+            double v_rel = v / joint_vel_limits_[traj->joint_names[i]];
+            if (v_rel > velocity_guess)
+                velocity_guess = std::min(v_rel, 1.0);
+        }
+
+        ROS_ERROR("Velocity estimate is %f", velocity_guess*100);
+
+    }
+
+    for (size_t i=0; i<traj->points.size(); ++i)
+    {
+      ros_JointTrajPt rbt_pt, xform_pt;
+      double vel, duration;
+
+      // select / reorder joints for sending to robot
+      if (!select(traj->joint_names, traj->points[i], this->all_joint_names_, &rbt_pt))
+        return false;
+
+      // transform point data (e.g. for joint-coupling)
+      if (!transform(rbt_pt, &xform_pt))
+        return false;
+
+      if (i == traj->points.size()-1) {
+          calc_duration(xform_pt, &duration);
+
+          vel = velocity_guess;
+      } else {
+          // reduce velocity to a single scalar, for robot command
+          if (!calc_speed(xform_pt, &vel, &duration))
+            return false;
+      }
+
+
+      JointTrajPtMessage msg = create_message(i, xform_pt.positions, vel, duration);
+      msgs->push_back(msg);
+    }
+
+    for (auto& msg: *msgs) {
+        std::cout << " " << msg.point_.getVelocity();
+    }
+    std::cout << std::endl;
+
+    return true;
+  }
 
   bool transform(const trajectory_msgs::JointTrajectoryPoint& pt_in,
       trajectory_msgs::JointTrajectoryPoint* pt_out)
@@ -75,6 +142,24 @@ public:
 
     return true;
   }
+
+  static JointTrajPtMessage create_message(int seq, std::vector<double> joint_pos, double velocity, double duration)
+  {
+    industrial::joint_data::JointData pos;
+    ROS_ASSERT(joint_pos.size() <= (unsigned int)pos.getMaxNumJoints());
+
+    for (size_t i=0; i<joint_pos.size(); ++i)
+      pos.setJoint(i, joint_pos[i]);
+
+    rbt_JointTrajPt pt;
+    pt.init(seq, pos, velocity, duration);
+
+    JointTrajPtMessage msg;
+    msg.init(pt);
+
+    return msg;
+  }
+
 };
 
 
