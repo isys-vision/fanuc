@@ -54,6 +54,8 @@ typedef trajectory_msgs::JointTrajectoryPoint  ros_JointTrajPt;
 class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
 {
   int J23_factor_;
+  bool override_velocity_ = false;
+  double fixed_override_ = 0.1;
 
 
 public:
@@ -66,6 +68,14 @@ public:
     }
 
     ros::param::get("J23_factor", this->J23_factor_);
+
+    if (ros::param::has("velocity_override"))
+    {
+        ros::param::get("velocity_override", fixed_override_);
+        fixed_override_ = std::min(1.0, std::max(0.0, fixed_override_));
+        override_velocity_ = true;
+        ROS_INFO("Using fixed velocity override, ignoring calculated/set velocities. Using %i%%", int(fixed_override_*100.0));
+    }
   }
 
 
@@ -111,16 +121,19 @@ public:
       if (!transform(rbt_pt, &xform_pt))
         return false;
 
-      if (i == traj->points.size()-1) {
-          calc_duration(xform_pt, &duration);
-
-          vel = velocity_guess;
+      if (override_velocity_) {
+          vel = fixed_override_;
       } else {
-          // reduce velocity to a single scalar, for robot command
-          if (!calc_speed(xform_pt, &vel, &duration))
-            return false;
-      }
+          if (i == traj->points.size()-1) {
+              calc_duration(xform_pt, &duration);
 
+              vel = velocity_guess;
+          } else {
+              // reduce velocity to a single scalar, for robot command
+              if (!calc_speed(xform_pt, &vel, &duration))
+                return false;
+          }
+      }
 
       JointTrajPtMessage msg = create_message(i, xform_pt.positions, vel, duration);
       msgs->push_back(msg);
