@@ -55,7 +55,7 @@
 // Need a floating point tolerance when checking joint limits, in case the joint starts at limit
 const double LIMIT_TOLERANCE = .0000001;
 
-const double J3J2_LIMIT_MAX = 25.0/180.0*M_PI;
+const double J3J2_LIMIT_MAX = 45.0/180.0*M_PI;
 
 /// \brief Search modes for searchPositionIK(), see there
 enum SEARCH_MODE { OPTIMIZE_FREE_JOINT=1, OPTIMIZE_MAX_JOINT=2 };
