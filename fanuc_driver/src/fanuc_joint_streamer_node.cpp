@@ -104,7 +104,7 @@ public:
                 velocity_guess = std::min(v_rel, 1.0);
         }
 
-        ROS_ERROR("Velocity estimate is %f", velocity_guess*100);
+        ROS_DEBUG("Velocity estimate is %f", velocity_guess*100);
 
     }
 
