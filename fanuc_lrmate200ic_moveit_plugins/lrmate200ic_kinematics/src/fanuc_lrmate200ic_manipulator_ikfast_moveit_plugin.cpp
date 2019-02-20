@@ -51,6 +51,7 @@
 #include <tf_conversions/tf_kdl.h>
 
 #include <algorithm>
+#include <numeric>
 
 // Need a floating point tolerance when checking joint limits, in case the joint starts at limit
 const double LIMIT_TOLERANCE = .0000001;
@@ -380,7 +381,6 @@ bool IKFastKinematicsPlugin::initialize(const std::string &robot_description,
   ROS_DEBUG_STREAM_NAMED("ikfast","Reading joints and links from URDF");
 
   urdf::LinkConstSharedPtr link = robot_model.getLink(tip_frame_);
-
   while(link->name != base_frame_ && joint_names_.size() <= num_joints_)
   {
     ROS_DEBUG_NAMED("ikfast","Link %s",link->name.c_str());
