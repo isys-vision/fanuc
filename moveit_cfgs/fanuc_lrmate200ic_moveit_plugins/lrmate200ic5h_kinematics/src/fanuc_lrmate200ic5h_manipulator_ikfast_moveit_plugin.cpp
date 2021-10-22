@@ -299,7 +299,7 @@ bool IKFastKinematicsPlugin::initialize(const std::string &robot_description,
 
   ROS_DEBUG_STREAM_NAMED("ikfast","Reading joints and links from URDF");
 
-  urdf::LinkConstSharedPtr link = robot_model.getLink(tip_frame_);
+  urdf::LinkConstSharedPtr link = robot_model.getLink(tip_frames_[0]);
   while(link->name != base_frame_ && joint_names_.size() <= num_joints_)
   {
     ROS_DEBUG_NAMED("ikfast","Link %s",link->name.c_str());
@@ -589,8 +589,8 @@ bool IKFastKinematicsPlugin::getPositionFK(const std::vector<std::string> &link_
     return false;
   }
 
-  if(link_names.size()!=1 || link_names[0]!=tip_frame_){
-    ROS_ERROR_NAMED("ikfast","Can compute FK for %s only",tip_frame_.c_str());
+  if(link_names.size()!=1 || link_names[0]!=tip_frames_[0]){
+    ROS_ERROR_NAMED("ikfast","Can compute FK for %s only",tip_frames_[0].c_str());
     return false;
   }
 
@@ -761,6 +761,7 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
   // Handle consitency limits if needed
   int num_positive_increments;
   int num_negative_increments;
+  double search_discretization = redundant_joint_discretization_.at(free_params_[0]);
 
   if(!consistency_limits.empty())
   {
@@ -769,13 +770,13 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
     double max_limit = fmin(joint_max_vector_[free_params_[0]], initial_guess+consistency_limits[free_params_[0]]);
     double min_limit = fmax(joint_min_vector_[free_params_[0]], initial_guess-consistency_limits[free_params_[0]]);
 
-    num_positive_increments = (int)((max_limit-initial_guess)/search_discretization_);
-    num_negative_increments = (int)((initial_guess-min_limit)/search_discretization_);
+    num_positive_increments = (int)((max_limit-initial_guess)/search_discretization);
+    num_negative_increments = (int)((initial_guess-min_limit)/search_discretization);
   }
   else // no consitency limits provided
   {
-    num_positive_increments = (joint_max_vector_[free_params_[0]]-initial_guess)/search_discretization_;
-    num_negative_increments = (initial_guess-joint_min_vector_[free_params_[0]])/search_discretization_;
+    num_positive_increments = (joint_max_vector_[free_params_[0]]-initial_guess)/search_discretization;
+    num_negative_increments = (initial_guess-joint_min_vector_[free_params_[0]])/search_discretization;
   }
 
   // -------------------------------------------------------------------------------------------------
@@ -837,7 +838,7 @@ bool IKFastKinematicsPlugin::searchPositionIK(const geometry_msgs::Pose &ik_pose
       return false;
     }
 
-    vfree[0] = initial_guess+search_discretization_*counter;
+    vfree[0] = initial_guess+search_discretization*counter;
     ROS_DEBUG_STREAM_NAMED("ikfast","Attempt " << counter << " with 0th free joint having value " << vfree[0]);
   }
 
