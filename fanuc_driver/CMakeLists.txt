@@ -12,6 +12,12 @@ catkin_package(
   CATKIN_DEPENDS industrial_robot_client
 )
 
+##Note: the following block becomes superflous when we use an updated version of industrial-core
+
+# these nodes run on the host computer, so use Linux sockets for
+# simple_message sockets
+add_definitions(-DLINUXSOCKETS=1)
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
