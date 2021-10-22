@@ -51,6 +51,7 @@
 #include <tf_conversions/tf_kdl.h>
 
 #include <algorithm>
+#include <numeric>
 
 // Need a floating point tolerance when checking joint limits, in case the joint starts at limit
 const double LIMIT_TOLERANCE = .0000001;
