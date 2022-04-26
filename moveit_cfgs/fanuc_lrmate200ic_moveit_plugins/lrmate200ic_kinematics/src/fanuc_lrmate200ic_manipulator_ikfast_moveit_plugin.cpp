@@ -56,7 +56,8 @@
 // Need a floating point tolerance when checking joint limits, in case the joint starts at limit
 const double LIMIT_TOLERANCE = .0000001;
 
-const double J3J2_LIMIT_MAX = 45.0/180.0*M_PI;
+const double J3J2_LIMIT_MAX = 25.0/180.0*M_PI;
+const double J3J2_LIMIT_MIN = -20.0/180.0*M_PI;
 
 /// \brief Search modes for searchPositionIK(), see there
 enum SEARCH_MODE { OPTIMIZE_FREE_JOINT=1, OPTIMIZE_MAX_JOINT=2 };
@@ -1382,7 +1383,7 @@ bool IKFastKinematicsPlugin::getPositionIKs(const geometry_msgs::Pose &ik_pose,
     {
       std::vector<double> sol;
       getSolution(solutions,s,sol);
-      ROS_DEBUG_NAMED("ikfast","Sol %d: %e   %e   %e   %e   %e   %e", s, sol[0], sol[1], sol[2], sol[3], sol[4], sol[5]);
+      ROS_DEBUG_NAMED("ikfast","Sol %d: %f   %f   %f   %f   %f   %f", s, sol[0]/M_PI*180, sol[1]/M_PI*180, sol[2]/M_PI*180, sol[3]/M_PI*180, sol[4]/M_PI*180, sol[5]/M_PI*180);
 //      ROS_ERROR("Sol %d: %e   %e   %e   %e   %e   %e", s, sol[0], sol[1], sol[2], sol[3], sol[4], sol[5]);
 
       bool obeys_limits = true;
@@ -1402,6 +1403,11 @@ bool IKFastKinematicsPlugin::getPositionIKs(const geometry_msgs::Pose &ik_pose,
       if ((sol[2]-sol[1]) > J3J2_LIMIT_MAX) {
           obeys_limits = false;
           ROS_DEBUG_STREAM_NAMED("ikfast","Solution is outside J3-J2 limit: " << (sol[2]-sol[1])*180.0/M_PI);
+      } else if ((sol[2]-sol[1]) < J3J2_LIMIT_MIN) {
+          obeys_limits = false;
+          ROS_DEBUG_STREAM_NAMED("ikfast","Solution is below lower J3-J2 limit: " << (sol[2]-sol[1])*180.0/M_PI);      
+      } else {
+          ROS_DEBUG_STREAM_NAMED("ikfast","Solution is inside J3-J2 limit: " << (sol[2]-sol[1])*180.0/M_PI);
       }
       if(obeys_limits)
       {
