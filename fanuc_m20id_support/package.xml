@@ -14,6 +14,7 @@
     <p><b>Specifications</b>:</p>
     <ul>
       <li>M-20iD/25 - "Cable integrated J3 Arm"</li>
+      <li>M-20iD/35 - "Hollow wrist"</li>
     </ul>
     <p>
       Joint limits and maximum joint velocities are based on the information in
@@ -23,13 +24,22 @@
       speed joints, extended / limited motion ranges or other options).
     </p>
     <p>
+      Joint limits and maximum joint velocities are based on the information in
+      the datasheet <em>FANUC M-20iD/35</em>
+      version <em>MDS-04232EN/01</em>. All urdfs are based on the default motion
+      and joint velocity limits, unless noted otherwise (ie: no support for
+      high speed joints, extended / limited motion ranges or other options).
+    </p>
+    <p>
       Before using any of the configuration files and / or meshes included
       in this package, be sure to check they are correct for the particular
       robot model and configuration you intend to use them with.
     </p>
   </description>
   <author>Timo Birnkraut</author>
+  <author>Christian Petersmeier</author>
   <maintainer email="g.a.vanderhoorn@tudelft.nl">G.A. vd. Hoorn (TU Delft Robotics Institute)</maintainer>
+  <maintainer email="Daniel.Muhle@dmgmori.com">Daniel Muhle</maintainer>
   <license>BSD</license>
 
   <url type="website">http://wiki.ros.org/fanuc_m20id_support</url>
