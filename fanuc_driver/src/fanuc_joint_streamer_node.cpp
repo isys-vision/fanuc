@@ -44,6 +44,9 @@
 
 #include <stdexcept>
 
+inline double rad_from_deg(double deg) {
+    return deg * M_PI / 180;
+}
 
 using industrial_robot_client::joint_trajectory_streamer::JointTrajectoryStreamer;
 using industrial::joint_traj_pt_message::JointTrajPtMessage;
@@ -51,11 +54,15 @@ typedef industrial::joint_traj_pt::JointTrajPt rbt_JointTrajPt;
 typedef trajectory_msgs::JointTrajectoryPoint  ros_JointTrajPt;
 
 
+static constexpr char const* name_interpolation_max_joint_difference = "interpolation_max_joint_difference";
+
 class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
 {
   int J23_factor_;
   bool override_velocity_ = false;
   double fixed_override_ = 0.1;
+
+  double max_joint_diff_rad = rad_from_deg(5.0);
 
 
 public:
@@ -76,18 +83,24 @@ public:
         override_velocity_ = true;
         ROS_INFO("Using fixed velocity override, ignoring calculated/set velocities. Using %i%%", int(fixed_override_*100.0));
     }
+
+    static const std::string prefix = "/robot_description_manipulators/manipulator/";
+    ros::param::get(prefix + name_interpolation_max_joint_difference, max_joint_diff_rad);
+    ROS_INFO("[fanuc-driver] %s: %f", name_interpolation_max_joint_difference, max_joint_diff_rad   );
   }
 
 
   virtual ~Fanuc_JointTrajectoryStreamer() {}
 
-  bool trajectory_to_msgs(const trajectory_msgs::JointTrajectoryConstPtr& traj, std::vector<JointTrajPtMessage>* msgs) override
+  bool trajectory_to_msgs(const trajectory_msgs::JointTrajectoryConstPtr& trajectory, std::vector<JointTrajPtMessage>* msgs) override
   {
     msgs->clear();
 
     // check for valid trajectory
-    if (!is_valid(*traj))
+    if (!is_valid(*trajectory))
       return false;
+
+    auto traj = std::make_shared<trajectory_msgs::JointTrajectory>(*trajectory);
 
     // guestimate velocity if only two points are given
     double velocity_guess = 0;
@@ -107,6 +120,46 @@ public:
         ROS_DEBUG("Velocity estimate is %f", velocity_guess*100);
 
     }
+    static char const* prefix = "[fanuc-driver]";
+
+    size_t num_points = traj->points.size();
+
+    // interpolate message to get dense trajectory
+    ROS_DEBUG("%s Original trajectory has %li points", prefix, num_points);
+
+    auto& pts = traj->points;
+
+    if (pts.size() > 2)
+    {
+        const size_t num_joints = pts[0].positions.size();
+        for(auto next = pts.begin() + 1; next != pts.end();)
+        {
+            auto prev = next - 1;
+            // double p = next->positions[0];
+            // ROS_DEBUG("%s point: %li, %.2f rad, %.1f deg", prefix, std::distance(pts.begin(), next), p, p * to_deg);
+            double max_dist = 0;
+            for (size_t j = 0; j < num_joints; ++j) {
+                max_dist = std::max(max_dist, std::abs(next->positions[j] - prev->positions[j]));
+            }
+            if (max_dist > max_joint_diff_rad) {
+                // ROS_DEBUG("%s max dist is %.1f deg -- need to interpolate.", prefix, max_dist * to_deg);
+                trajectory_msgs::JointTrajectoryPoint pt = *next;
+                for (size_t j = 0; j < num_joints; ++j) {
+                    pt.positions    [j] = prev->positions    [j] + 0.5 * (next->positions    [j] - prev->positions    [j]);
+                    pt.velocities   [j] = prev->velocities   [j] + 0.5 * (next->velocities   [j] - prev->velocities   [j]);
+                    pt.accelerations[j] = prev->accelerations[j] + 0.5 * (next->accelerations[j] - prev->accelerations[j]);
+                }
+                pt.time_from_start = prev->time_from_start + (next->time_from_start - prev->time_from_start) * 0.5;
+                next = pts.insert(next, pt);
+            } else {
+                ++next;
+            }
+        }
+
+        num_points = pts.size();
+        ROS_DEBUG("%s Interpolated trajectory has %li points", prefix, num_points);
+    }
+
 
     for (size_t i=0; i<traj->points.size(); ++i)
     {
