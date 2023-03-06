@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0.2)
 
 project(fanuc_driver)
 
-set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # let industrial_robot_client pull in all other dependencies
