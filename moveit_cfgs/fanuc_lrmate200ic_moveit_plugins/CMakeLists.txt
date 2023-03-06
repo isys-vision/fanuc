@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(fanuc_lrmate200ic_moveit_plugins)
 
-#enable c++11
-set (CMAKE_CXX_STANDARD 11)
 set (CMAKE_CXX_EXTENSIONS FALSE)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -11,11 +9,6 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf_conversions
 )
-
-# enable C++11 if needed for MoveIt on Kinetic
-if ("${moveit_core_VERSION}" VERSION_GREATER "0.9.0")
-  add_definitions(-std=c++11)
-endif()
 
 include_directories(${catkin_INCLUDE_DIRS})
 
