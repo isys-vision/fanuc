@@ -57,7 +57,7 @@
 const double LIMIT_TOLERANCE = .0000001;
 
 const double J3J2_LIMIT_MAX = 25.0/180.0*M_PI;
-const double J3J2_LIMIT_MIN = -20.0/180.0*M_PI;
+const double J3J2_LIMIT_MIN = -55.0/180.0*M_PI;
 
 /// \brief Search modes for searchPositionIK(), see there
 enum SEARCH_MODE { OPTIMIZE_FREE_JOINT=1, OPTIMIZE_MAX_JOINT=2 };
