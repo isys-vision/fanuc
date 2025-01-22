@@ -116,42 +116,42 @@
       <parent link="${prefix}base_link"/>
       <child link="${prefix}link_1"/>
       <axis xyz="0 0 1"/>
-      <limit lower="${radians(-340)}" upper="${radians(340)}" effort="0" velocity="${radians(210)}" />
+      <limit lower="${radians(-170)}" upper="${radians(170)}" effort="0" velocity="${radians(210)}" />
     </joint>
     <joint name="${prefix}joint_2" type="revolute">
       <origin xyz="0.075 0 0" rpy="0 0 0"/>
       <parent link="${prefix}link_1"/>
       <child link="${prefix}link_2"/>
       <axis xyz="0 1 0"/>
-      <limit lower="${radians(-260)}" upper="${radians(260)}" effort="0" velocity="${radians(210)}" />
+      <limit lower="${radians(-100)}" upper="${radians(160)}" effort="0" velocity="${radians(210)}" />
     </joint>
     <joint name="${prefix}joint_3" type="revolute">
       <origin xyz="0 0 0.840" rpy="0 ${radians(90)} 0"/>
       <parent link="${prefix}link_2"/>
       <child link="${prefix}link_3"/>
       <axis xyz="0 -1 0"/>
-      <limit lower="${radians(-458)}" upper="${radians(458)}" effort="0" velocity="${radians(265)}" />
+      <limit lower="${radians(-190)}" upper="${radians(268)}" effort="0" velocity="${radians(265)}" />
     </joint>
     <joint name="${prefix}joint_4" type="revolute">
       <origin xyz="-0.215 0 0.890" rpy="0 0 0"/>
       <parent link="${prefix}link_3"/>
       <child link="${prefix}link_4"/>
       <axis xyz="0 0 -1"/>
-      <limit lower="${radians(-400)}" upper="${radians(400)}" effort="0" velocity="${radians(420)}" />
+      <limit lower="${radians(-200)}" upper="${radians(200)}" effort="0" velocity="${radians(420)}" />
     </joint>
     <joint name="${prefix}joint_5" type="revolute">
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <parent link="${prefix}link_4"/>
       <child link="${prefix}link_5"/>
       <axis xyz="0 -1 0"/>
-      <limit lower="${radians(-280)}" upper="${radians(280)}" effort="0" velocity="${radians(420)}" />
+      <limit lower="${radians(-140)}" upper="${radians(140)}" effort="0" velocity="${radians(420)}" />
     </joint>
     <joint name="${prefix}joint_6" type="revolute">
       <origin xyz="0 0 0.09" rpy="0 0 0"/>
       <parent link="${prefix}link_5"/>
       <child link="${prefix}link_6"/>
       <axis xyz="0 0 -1"/>
-      <limit lower="${radians(-540)}" upper="${radians(540)}" effort="0" velocity="${radians(720)}" />
+      <limit lower="${radians(-270)}" upper="${radians(270)}" effort="0" velocity="${radians(720)}" />
     </joint>
 
     <!-- ROS-Industrial 'base' frame: base_link to Fanuc World Coordinates transform -->
