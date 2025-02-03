@@ -13,12 +13,12 @@
     </p>
     <p><b>Specifications</b>:</p>
     <ul>
-      <li>M-20iB/25 - "Cable integrated J3 Arm"</li>
+      <li>M-20iD/25 - "Cable integrated J3 Arm"</li>
     </ul>
     <p>
       Joint limits and maximum joint velocities are based on the information in
-      the <em>FANUC Robot M-20iB Mechanical Unit Operator's Manual</em> version
-      <em>FEC-RO-DS-M20iD25-DE-1</em>. All urdfs are based on the default motion and
+      the <em>FANUC Robot M-20iD Mechanical Unit Operator's Manual</em> version
+      <em>B-84074EN/08</em>. All urdfs are based on the default motion and
       joint velocity limits, unless noted otherwise (ie: no support for high
       speed joints, extended / limited motion ranges or other options).
     </p>
