@@ -28,7 +28,7 @@
     <p>
       Joint limits and maximum joint velocities are based on the information in
       the <em>FANUC Robot R-2000iC Mechanical Unit Operator's Manual</em>
-      version <em>B-83644EN/01</em>. All urdfs are based on the default motion
+      version <em>B-83644EN/10</em>. All urdfs are based on the default motion
       and joint velocity limits, unless noted otherwise (ie: no support for
       high speed joints, extended / limited motion ranges or other options).
     </p>
