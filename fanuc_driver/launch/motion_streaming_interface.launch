@@ -22,7 +22,7 @@
 
   <!-- load the correct version of the motion streaming node -->
   <node if="$(arg use_bswap)" name="motion_streaming_interface"
-    pkg="fanuc_driver" type="motion_streaming_interface_bswap" />
+    pkg="fanuc_driver" type="motion_streaming_interface_bswap" respawn="true" respawn_delay="1"/>
   <node unless="$(arg use_bswap)" name="motion_streaming_interface"
-    pkg="fanuc_driver" type="motion_streaming_interface" />
+    pkg="fanuc_driver" type="motion_streaming_interface" respawn="true" respawn_delay="1"/>
 </launch>
