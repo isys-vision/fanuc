@@ -23,7 +23,7 @@
     <arg name="use_bswap"  value="$(arg use_bswap)" />
   </include>
 
-  <node name="robot_state_publisher" pkg="robot_state_publisher" 
+  <node name="robot_state_publisher" pkg="robot_state_publisher"
     type="robot_state_publisher" />
 
   <include file="$(find fanuc_m710ic_support)/launch/load_m710ic50.launch" />
