@@ -40,6 +40,8 @@
 
 #include <industrial_robot_client/joint_trajectory_streamer.h>
 
+#include "control_msgs/FollowJointTrajectoryFeedback.h"
+
 #include <simple_message/joint_traj_pt.h>
 
 #include <stdexcept>
@@ -49,12 +51,15 @@ inline double rad_from_deg(double deg) {
 }
 
 using industrial_robot_client::joint_trajectory_streamer::JointTrajectoryStreamer;
+using industrial_robot_client::joint_trajectory_streamer::TransferStates::TransferState;
+
 using industrial::joint_traj_pt_message::JointTrajPtMessage;
+
 typedef industrial::joint_traj_pt::JointTrajPt rbt_JointTrajPt;
 typedef trajectory_msgs::JointTrajectoryPoint  ros_JointTrajPt;
 
-
 static constexpr char const* name_interpolation_max_joint_difference = "interpolation_max_joint_difference";
+static constexpr char const* name_fanuc_move_action_timeout_s = "fanuc_move_action_timeout_s";
 
 class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
 {
@@ -64,6 +69,12 @@ class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
 
   double max_joint_diff_rad = rad_from_deg(5.0);
 
+  ros::Publisher pub_joint_control_state_;
+
+  const double FEED_WATCHDOG_PERIOD_ = 0.5;
+  const double FEED_TIMEOUT_PERIOD_ = 15.0;
+  double fanuc_move_action_timeout_s = FEED_TIMEOUT_PERIOD_;
+  boost::thread* feedback_thread_;
 
 public:
   Fanuc_JointTrajectoryStreamer() : JointTrajectoryStreamer(), J23_factor_(0)
@@ -85,10 +96,34 @@ public:
     }
 
     static const std::string prefix = "/robot_description_manipulators/manipulator/";
+
     ros::param::get(prefix + name_interpolation_max_joint_difference, max_joint_diff_rad);
-    ROS_INFO("[fanuc-driver] %s: %f", name_interpolation_max_joint_difference, max_joint_diff_rad   );
+    ROS_INFO("[fanuc-driver] %s: %f", name_interpolation_max_joint_difference, max_joint_diff_rad);
+
+    ros::param::get(prefix + name_fanuc_move_action_timeout_s, fanuc_move_action_timeout_s);
+    ROS_INFO("[fanuc-driver] %s: %f", name_fanuc_move_action_timeout_s, fanuc_move_action_timeout_s);
+
+    this->pub_joint_control_state_ =
+          this->node_.advertise<control_msgs::FollowJointTrajectoryFeedback>("feedback_states", 1);
+
+    this->feedback_thread_ =
+        new boost::thread(boost::bind(&Fanuc_JointTrajectoryStreamer::feed_status_watchdog, this));
   }
 
+  void feed_status_watchdog() {
+    ROS_INFO("Start feed_status_watchdog monitoring thread");
+    while (ros::ok()) {
+      if (ros::Time::now() - this->streaming_start_ < ros::Duration(FEED_TIMEOUT_PERIOD_)) {
+        // only if this action has not timed out
+
+        control_msgs::FollowJointTrajectoryFeedback control_state;
+        this->pub_joint_control_state_.publish(control_state);
+      }
+
+      ros::Duration(FEED_WATCHDOG_PERIOD_).sleep();  //  loop while waiting for new trajectory
+    }
+    ROS_WARN("Exiting feed_status_watchdog monitoring thread");
+  }
 
   virtual ~Fanuc_JointTrajectoryStreamer() {}
 
