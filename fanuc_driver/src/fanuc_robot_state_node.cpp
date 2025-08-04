@@ -92,6 +92,7 @@ int main(int argc, char** argv)
   // we need to correct the reported joint angles
   Fanuc_JointRelayHandler jointHandler;
   std::vector<std::string> joint_names = rsi.get_joint_names();
+  joint_names.push_back("world_to_robot");
   jointHandler.init(rsi.get_connection(), joint_names);
   rsi.add_handler(&jointHandler);
 
