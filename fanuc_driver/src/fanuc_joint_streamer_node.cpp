@@ -117,6 +117,7 @@ public:
         // only if this action has not timed out
 
         control_msgs::FollowJointTrajectoryFeedback control_state;
+        ROS_WARN("Joint names in watchdog feeder: %d", control_state.joint_names.size());
         this->pub_joint_control_state_.publish(control_state);
       }
 
