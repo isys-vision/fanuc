@@ -113,7 +113,7 @@ public:
   void feed_status_watchdog() {
     ROS_INFO("Start feed_status_watchdog monitoring thread");
     while (ros::ok()) {
-      if (ros::Time::now() - this->streaming_start_ < ros::Duration(FEED_TIMEOUT_PERIOD_)) {
+      if (ros::Time::now() - this->streaming_start_ < ros::Duration(fanuc_move_action_timeout_s)) {
         // only if this action has not timed out
 
         control_msgs::FollowJointTrajectoryFeedback control_state;
@@ -274,7 +274,6 @@ int main(int argc, char** argv)
   Fanuc_JointTrajectoryStreamer motionInterface;
 
   control_msgs::FollowJointTrajectoryFeedback control_state;
-  ROS_WARN("Joint names in watchdog feeder: %d", control_state.joint_names.size());
 
   motionInterface.init();
   motionInterface.run();
