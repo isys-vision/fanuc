@@ -273,6 +273,9 @@ int main(int argc, char** argv)
   // launch the default JointTrajectoryStreamer connection/handlers
   Fanuc_JointTrajectoryStreamer motionInterface;
 
+  control_msgs::FollowJointTrajectoryFeedback control_state;
+  ROS_WARN("Joint names in watchdog feeder: %d", control_state.joint_names.size());
+
   motionInterface.init();
   motionInterface.run();
 
