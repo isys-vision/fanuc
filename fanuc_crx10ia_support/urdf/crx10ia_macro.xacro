@@ -116,7 +116,7 @@
       <parent link="${prefix}base_link" />
       <child link="${prefix}link_1" />
       <axis xyz="0 0 1" />
-      <limit effort="0" lower="${radians(-180)}" upper="${radians(180)}" velocity="${radians(120)}" />
+      <limit effort="0" lower="${radians(-190)}" upper="${radians(190)}" velocity="${radians(120)}" />
     </joint>
     <joint name="${prefix}joint_2" type="revolute">
       <origin xyz="0 0 0" rpy="0 0 0" />
@@ -151,7 +151,7 @@
       <parent link="${prefix}link_5"/>
       <child link="${prefix}link_6"/>
       <axis xyz="-1 0 0"/>
-      <limit effort="0" lower="${radians(-190)}" upper="${radians(190)}" velocity="${radians(180)}" />
+      <limit effort="0" lower="${radians(-225)}" upper="${radians(225)}" velocity="${radians(180)}" />
     </joint>
 
     <!-- ROS-Industrial 'base' frame: base_link to Fanuc World Coordinates transform -->
