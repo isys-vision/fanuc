@@ -17,6 +17,7 @@
   <exec_depend>fanuc_cr35ia_support</exec_depend>
   <exec_depend>fanuc_cr7ia_support</exec_depend>
   <exec_depend>fanuc_crx10ia_support</exec_depend>
+  <exec_depend>fanuc_crx20ia_support</exec_depend>
   <exec_depend>fanuc_driver</exec_depend>
   <exec_depend>fanuc_lrmate200i_support</exec_depend>
   <exec_depend>fanuc_lrmate200ib_support</exec_depend>
