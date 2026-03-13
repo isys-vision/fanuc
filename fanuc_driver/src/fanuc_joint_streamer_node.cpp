@@ -44,6 +44,8 @@
 
 #include <simple_message/joint_traj_pt.h>
 
+#include <csignal>
+
 #include <stdexcept>
 
 inline double rad_from_deg(double deg) {
@@ -263,9 +265,20 @@ public:
 
 };
 
+void signal_handler(int signal) {
+  if (signal == SIGTERM) {
+    std::cerr << "SIGTERM received\n";
+    std::exit(EXIT_FAILURE);
+  } else {
+    std::cerr << "Unexpected signal " << signal << " received\n";
+  }
+}
 
 int main(int argc, char** argv)
 {
+  // exit gracefully on rosnode kill
+  std::signal(SIGTERM, signal_handler);
+
   // initialize node
   ros::init(argc, argv, "motion_interface");
 
