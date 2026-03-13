@@ -41,6 +41,8 @@
 #include <industrial_robot_client/robot_state_interface.h>
 #include <industrial_utils/param_utils.h>
 
+#include <csignal>
+
 #include <stdexcept>
 
 
@@ -78,9 +80,20 @@ public:
   }
 };
 
+void signal_handler(int signal) {
+  if (signal == SIGTERM) {
+    std::cerr << "SIGTERM received\n";
+    std::exit(EXIT_FAILURE);
+  } else {
+    std::cerr << "Unexpected signal " << signal << " received\n";
+  }
+}
 
 int main(int argc, char** argv)
 {
+  // exit gracefully on rosnode kill
+  std::signal(SIGTERM, signal_handler);
+
   // initialize node
   ros::init(argc, argv, "state_interface");
 
