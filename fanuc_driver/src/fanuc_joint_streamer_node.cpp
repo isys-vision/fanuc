@@ -42,6 +42,8 @@
 
 #include "control_msgs/FollowJointTrajectoryFeedback.h"
 
+#include <csignal>
+
 #include <simple_message/joint_traj_pt.h>
 
 #include <csignal>

@@ -29,6 +29,9 @@
   <!-- Load the byte-swapping versions of Fanuc nodes if required -->
   <arg name="use_bswap" doc="If true, driver will byte-swap all incoming and outgoing data" />
 
+  <!-- Allow using streamer node instead of downloader by setting to false. Driver files on the robot side need to get updated-->
+  <arg name="use_downloading_interface" default="true" />
+
   <!-- copy the specified parameters to the Parameter Server, for 
        use by nodes below -->
   <param name="robot_ip_address" type="str" value="$(arg robot_ip)" />
@@ -46,11 +49,23 @@
   <!-- motion_streaming_interface: sends robot motion commands by 
        STREAMING path to robot (using socket connection to robot) 
   -->
-  <include file="$(find fanuc_driver)/launch/motion_streaming_interface.launch">
-    <arg name="robot_ip"   value="$(arg robot_ip)" />
-    <arg name="J23_factor" value="$(arg J23_factor)" />
-    <arg name="use_bswap"  value="$(arg use_bswap)" />
-  </include>
+  <!-- Streaming interface -->
+  <group unless="$(arg use_downloading_interface)">
+    <include file="$(find fanuc_driver)/launch/motion_streaming_interface.launch">
+      <arg name="robot_ip"   value="$(arg robot_ip)" />
+      <arg name="J23_factor" value="$(arg J23_factor)" />
+      <arg name="use_bswap"  value="$(arg use_bswap)" />
+    </include>
+  </group>
+
+  <!-- Downloading interface -->
+  <group if="$(arg use_downloading_interface)">
+    <include file="$(find fanuc_driver)/launch/motion_downloading_interface.launch">
+      <arg name="robot_ip"   value="$(arg robot_ip)" />
+      <arg name="J23_factor" value="$(arg J23_factor)" />
+      <arg name="use_bswap"  value="$(arg use_bswap)" />
+    </include>
+  </group>
 
   <!-- joint_trajectory_action: provides actionlib interface for 
        high-level robot control
