@@ -41,9 +41,6 @@
 #include "simple_message/classes/mikado_dynamic_joints.h"
 #include <csignal>
 
-inline double rad_from_deg(double deg) {
-    return deg * M_PI / 180;
-}
 
 using industrial_robot_client::joint_trajectory_downloader::FanucJointTrajectoryDownloader;
 namespace StandardSocketPorts = industrial::simple_socket::StandardSocketPorts;
@@ -59,13 +56,9 @@ class FanucDynamicJointTrajectoryDownloader : public FanucJointTrajectoryDownloa
   bool override_velocity_ = false;
   double fixed_override_ = 0.1;
 
-  double max_joint_diff_rad = rad_from_deg(10.0);
-
   ros::Publisher pub_joint_control_state_;
 
 public:
-  //TODO: ADD INTERPOLATION FUNCTION AS IN STREAMER. EITHER BY MAKING THE METHODS IN
-  //      FANUC_JOINT_TRAJECTORY_INTERFACE VIRTUAL OR BY ADDING INTERPOLATION THERE
 
   ~FanucDynamicJointTrajectoryDownloader()
   {
@@ -94,10 +87,7 @@ public:
         ROS_INFO("Using fixed velocity override, ignoring calculated/set velocities. Using %i%%", int(fixed_override_*100.0));
     }
 
-    static const std::string prefix = "/robot_description_manipulators/manipulator/";
-
-    ros::param::get(prefix + name_interpolation_max_joint_difference, max_joint_diff_rad);
-    ROS_INFO("[fanuc-driver] %s: %f", name_interpolation_max_joint_difference, max_joint_diff_rad);
+    // trajectory interpolation is handled by FanucJointTrajectoryInterface
 
     return true;
   }

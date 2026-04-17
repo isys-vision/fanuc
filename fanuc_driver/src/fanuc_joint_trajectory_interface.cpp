@@ -51,6 +51,10 @@ namespace joint_trajectory_interface
 
 #define ROS_ERROR_RETURN(rtn,...) do {ROS_ERROR(__VA_ARGS__); return(rtn);} while(0)
 
+inline double rad_from_deg(double deg) {
+    return deg * M_PI / 180;
+}
+
 bool FanucJointTrajectoryInterface::init(std::string default_ip, int default_port)
 {
   std::string ip;
@@ -71,7 +75,7 @@ bool FanucJointTrajectoryInterface::init(std::string default_ip, int default_por
     ROS_ERROR("No valid robot IP port found.  Please set ROS '~port' param");
     return false;
   }
-  interpolation_threshold_ = 10.0 * (M_PI/180);
+  interpolation_threshold_ = rad_from_deg(10.0);
   ros::param::get("/robot_description_manipulators/manipulator/interpolation_max_joint_difference", interpolation_threshold_);
   ROS_INFO("[fanuc-driver] interpolation threshold: %f", interpolation_threshold_);
 
