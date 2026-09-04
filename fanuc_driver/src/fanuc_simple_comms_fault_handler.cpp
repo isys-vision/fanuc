@@ -81,7 +81,9 @@ void FanucSimpleCommsFaultHandler::connectionFailCB()
   if (!(this->getConnection()->isConnected()))
   {
     ROS_WARN("Connection failed, attempting reconnect");
-    this->getConnection()->makeConnect();
+    while(!this->getConnection()->makeConnect()){
+      ROS_WARN("[Fanuc Driver][connectionFailCB] Could not reconnect, retrying.");
+    }
     if(this->connection_info_msg_){
         // send connection info
         bool res = this->connection_->sendMsg(*this->connection_info_msg_);

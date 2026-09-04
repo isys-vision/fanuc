@@ -105,7 +105,10 @@ bool FanucJointTrajectoryInterface::init(SmplMsgConnection* connection, const st
   this->connection_ = connection;
   this->all_joint_names_ = joint_names;
   this->joint_vel_limits_ = velocity_limits;
-  connection_->makeConnect();
+  while(!connection_->makeConnect()){
+    ROS_ERROR("[Fanuc Driver] Trajectory Interface could not connect to server. Retrying.");
+    sleep(1);
+  }
 
   // try to read velocity limits from URDF, if none specified
   if (joint_vel_limits_.empty() && !industrial_utils::param::getJointVelocityLimits("robot_description", joint_vel_limits_))
@@ -173,7 +176,10 @@ bool FanucJointTrajectoryInterface::setSpeedCB(industrial_msgs::SetSpeed::Reques
   if (!this->connection_->isConnected())
   {
     ROS_WARN("Attempting robot reconnection");
-    this->connection_->makeConnect();
+    while(!this->connection_->makeConnect()){
+      ROS_WARN("[Fanuc Driver][setSpeedCB] Could not reconnect, retrying.");
+      sleep(1);
+    }
   }
 
   ROS_INFO("Sending robot speed: %d", req.speed);

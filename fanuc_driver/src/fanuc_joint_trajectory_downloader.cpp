@@ -56,7 +56,10 @@ bool FanucJointTrajectoryDownloader::send_to_robot(const std::vector<JointTrajPt
   if (!this->connection_->isConnected())
   {
     ROS_WARN("Attempting robot reconnection");
-    this->connection_->makeConnect();
+    while(!this->connection_->makeConnect()){
+      ROS_WARN("[Fanuc Driver][send_to_robot] Could not reconnect, retrying.");
+      sleep(1);
+    }
   }
 
   ROS_INFO("Sending trajectory points, size: %d", (int)points.size());
