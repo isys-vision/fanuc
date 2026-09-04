@@ -96,6 +96,17 @@ public:
     industrial::simple_message::SimpleMessage msg, reply;
     industrial::simple_message::mikado_classes::MikadoConnectionInfo mikConnectionInfo;
     industrial::simple_message::mikado_messages::MikadoConnectionInfoMessage mikConnectionInfoMsg;
+
+    if(!this->connection_){
+      ROS_ERROR("[Joint Downloader] Cannot send connection information as no connection has been initialized");
+      return false;
+    }
+
+    if (!this->connection_->isConnected()) {
+      ROS_ERROR("[Joint Downloader] Cannot send connection information as no connection has been established");
+      return false;
+    }
+
     int number_axis_trajectory = 6;
     int number_external_axis_trajectory = 0;
     bool is_traj_radian = false;
@@ -238,7 +249,8 @@ public:
               ROS_WARN("Could not send connection info message");
             }
           } else{
-            ROS_WARN("Could not reconnect");
+            ROS_WARN("Failed to send point. Could not reconnect.");
+            return false;
           }
         }
       } else{

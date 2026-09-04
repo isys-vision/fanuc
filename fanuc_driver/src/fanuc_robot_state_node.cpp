@@ -116,6 +116,10 @@ class Fanuc_RobotStateInterface : public FanucRobotStateInterface
       ROS_ERROR("[RobotStateNode] Cannot send connection information as no connection has been initialized");
       return false;
     }
+    if (!this->connection_->isConnected()) {
+      ROS_ERROR("[RobotStateNode] Cannot send connection information as no connection has been established");
+      return false;
+    }
     bool res = this->connection_->sendMsg(msg);
     if (res){
       ROS_WARN("[INIT] Set connection message");
