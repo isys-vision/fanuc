@@ -38,7 +38,7 @@
 
 #include <fanuc_driver/fanuc_utils.h>
 
-#include <industrial_robot_client/robot_state_interface.h>
+#include <fanuc_driver/fanuc_robot_state_interface.h>
 #include <industrial_utils/param_utils.h>
 
 #include <csignal>
@@ -46,7 +46,7 @@
 #include <stdexcept>
 
 
-using industrial_robot_client::robot_state_interface::RobotStateInterface;
+using industrial_robot_client::fanuc_robot_state_interface::FanucRobotStateInterface;
 using industrial_robot_client::joint_relay_handler::JointRelayHandler;
 using industrial_utils::param::getJointNames;
 
@@ -98,7 +98,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "state_interface");
 
   // launch the default Robot State Interface connection/handlers
-  RobotStateInterface rsi;
+  FanucRobotStateInterface rsi;
   rsi.init();
 
   // replace the generic JointRelayHandler with our Fanuc specific one as

@@ -25,6 +25,9 @@ include_directories(
 
 # non-swapping Fanuc specific robot state node
 add_executable(${PROJECT_NAME}_robot_state
+  src/fanuc_simple_comms_fault_handler.cpp
+  src/fanuc_message_manager.cpp
+  src/fanuc_robot_state_interface.cpp
   src/fanuc_robot_state_node.cpp
   src/fanuc_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_robot_state
@@ -42,6 +45,9 @@ target_compile_definitions(
 
 # byte-swapping Fanuc specific robot state node
 add_executable(${PROJECT_NAME}_robot_state_bswap
+  src/fanuc_simple_comms_fault_handler.cpp
+  src/fanuc_message_manager.cpp
+  src/fanuc_robot_state_interface.cpp
   src/fanuc_robot_state_node.cpp
   src/fanuc_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_robot_state_bswap
