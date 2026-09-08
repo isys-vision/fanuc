@@ -59,6 +59,8 @@ target_compile_definitions(
 
 # non-swapping Fanuc specific motion streaming interface
 add_executable(${PROJECT_NAME}_motion_streaming_interface
+  src/fanuc_joint_trajectory_interface.cpp
+  src/fanuc_joint_trajectory_streamer.cpp
   src/fanuc_joint_streamer_node.cpp
   src/fanuc_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_motion_streaming_interface
@@ -76,6 +78,8 @@ target_compile_definitions(
 
 # byte-swapping Fanuc specific motion streaming interface
 add_executable(${PROJECT_NAME}_motion_streaming_interface_bswap
+  src/fanuc_joint_trajectory_interface.cpp
+  src/fanuc_joint_trajectory_streamer.cpp
   src/fanuc_joint_streamer_node.cpp
   src/fanuc_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_motion_streaming_interface_bswap

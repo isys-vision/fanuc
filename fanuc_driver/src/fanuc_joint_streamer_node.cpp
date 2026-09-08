@@ -38,7 +38,7 @@
 
 #include <fanuc_driver/fanuc_utils.h>
 
-#include <industrial_robot_client/joint_trajectory_streamer.h>
+#include <fanuc_driver/fanuc_joint_trajectory_streamer.h>
 
 #include "control_msgs/FollowJointTrajectoryFeedback.h"
 
@@ -52,8 +52,8 @@ inline double rad_from_deg(double deg) {
     return deg * M_PI / 180;
 }
 
-using industrial_robot_client::joint_trajectory_streamer::JointTrajectoryStreamer;
-using industrial_robot_client::joint_trajectory_streamer::TransferStates::TransferState;
+using industrial_robot_client::fanuc_joint_trajectory_streamer::FanucJointTrajectoryStreamer;
+using industrial_robot_client::fanuc_joint_trajectory_streamer::TransferStates::TransferState;
 
 using industrial::joint_traj_pt_message::JointTrajPtMessage;
 
@@ -63,7 +63,7 @@ typedef trajectory_msgs::JointTrajectoryPoint  ros_JointTrajPt;
 static constexpr char const* name_interpolation_max_joint_difference = "interpolation_max_joint_difference";
 static constexpr char const* name_fanuc_move_action_timeout_s = "fanuc_move_action_timeout_s";
 
-class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
+class Fanuc_JointTrajectoryStreamer : public FanucJointTrajectoryStreamer
 {
   int J23_factor_;
   bool override_velocity_ = false;
@@ -79,7 +79,7 @@ class Fanuc_JointTrajectoryStreamer : public JointTrajectoryStreamer
   boost::thread* feedback_thread_;
 
 public:
-  Fanuc_JointTrajectoryStreamer() : JointTrajectoryStreamer(), J23_factor_(0)
+  Fanuc_JointTrajectoryStreamer() : FanucJointTrajectoryStreamer(), J23_factor_(0)
   {
     if (!ros::param::has("J23_factor"))
     {
