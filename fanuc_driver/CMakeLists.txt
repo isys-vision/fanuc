@@ -43,8 +43,8 @@ add_library(fanuc_interfaces
     src/fanuc_robot_state_interface.cpp
 )
 
-add_library(mikado_simple_message ${MSG_SRC_FILES})
-target_link_libraries(mikado_simple_message
+add_library(fanuc_mikado_simple_message ${MSG_SRC_FILES})
+target_link_libraries(fanuc_mikado_simple_message
   simple_message)
 
 
@@ -58,7 +58,7 @@ add_executable(${PROJECT_NAME}_robot_state
   src/fanuc_simple_comms_fault_handler.cpp
   )
 target_link_libraries(${PROJECT_NAME}_robot_state
-  mikado_simple_message
+  fanuc_mikado_simple_message
   industrial_robot_client
   simple_message
   ${catkin_LIBRARIES})
@@ -81,7 +81,7 @@ add_executable(${PROJECT_NAME}_robot_state_bswap
   src/fanuc_simple_comms_fault_handler.cpp
   )
 target_link_libraries(${PROJECT_NAME}_robot_state_bswap
-  mikado_simple_message
+  fanuc_mikado_simple_message
   industrial_robot_client_bswap
   simple_message_bswap
   ${catkin_LIBRARIES})
@@ -116,7 +116,7 @@ add_executable(${PROJECT_NAME}_motion_downloading_interface
   src/fanuc_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_motion_downloading_interface
   fanuc_interfaces
-  mikado_simple_message
+  fanuc_mikado_simple_message
   industrial_robot_client
   simple_message
   ${catkin_LIBRARIES})
@@ -151,7 +151,7 @@ src/fanuc_joint_downloader_node.cpp
 src/fanuc_utils.cpp)
 target_link_libraries(${PROJECT_NAME}_motion_downloading_interface_bswap
   fanuc_interfaces
-  mikado_simple_message
+  fanuc_mikado_simple_message
   industrial_robot_client_bswap
   simple_message_bswap
   ${catkin_LIBRARIES})
@@ -200,7 +200,7 @@ install(
 
 install(
   TARGETS
-    mikado_simple_message
+    fanuc_mikado_simple_message
     fanuc_interfaces
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
