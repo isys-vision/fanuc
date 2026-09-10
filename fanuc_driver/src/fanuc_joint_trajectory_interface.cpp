@@ -97,10 +97,7 @@ bool FanucJointTrajectoryInterface::init(SmplMsgConnection* connection, const st
   this->connection_ = connection;
   this->all_joint_names_ = joint_names;
   this->joint_vel_limits_ = velocity_limits;
-  while(!connection_->makeConnect()){
-      ROS_WARN("[Fanuc Trajectory Interface] Could not reconnect on init, retrying.");
-      sleep(1);
-  }
+  connection_->makeConnect();
 
   // try to read velocity limits from URDF, if none specified
   if (joint_vel_limits_.empty() && !industrial_utils::param::getJointVelocityLimits("robot_description", joint_vel_limits_))
