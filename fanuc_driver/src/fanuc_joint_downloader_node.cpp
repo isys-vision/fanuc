@@ -54,7 +54,7 @@ class FanucDynamicJointTrajectoryDownloader : public FanucJointTrajectoryDownloa
 
   int J23_factor_;
   bool override_velocity_ = false;
-  double fixed_override_ = 0.1;
+  double fixed_override_ = 70.0;
 
   ros::Publisher pub_joint_control_state_;
 
@@ -78,14 +78,6 @@ public:
     }
 
     ros::param::get("J23_factor", this->J23_factor_);
-
-    if (ros::param::has("velocity_override"))
-    {
-        ros::param::get("velocity_override", fixed_override_);
-        fixed_override_ = std::min(1.0, std::max(0.0, fixed_override_));
-        override_velocity_ = true;
-        ROS_INFO("Using fixed velocity override, ignoring calculated/set velocities. Using %i%%", int(fixed_override_*100.0));
-    }
 
     // trajectory interpolation is handled by FanucJointTrajectoryInterface
 
@@ -178,6 +170,14 @@ public:
     }
     if(this->is_traj_velocity_){
       mikDynamicJointsTrajPt.setField(industrial::simple_message::mikado_classes::DynamicJointsValidFieldTypes::VELOCITY);
+      if (ros::param::has("/robot_description_manipulators/manipulator/velocity_override"))
+      {
+          ros::param::get("/robot_description_manipulators/manipulator/velocity_override", fixed_override_);
+          fixed_override_ = std::min(std::max(1.0, fixed_override_), 100.0);
+          override_velocity_ = true;
+      } else {
+        override_velocity_ = false;
+      }
     } else {
       mikDynamicJointsTrajPt.setFieldInvalid(industrial::simple_message::mikado_classes::DynamicJointsValidFieldTypes::VELOCITY);
     }
@@ -215,9 +215,14 @@ public:
       mikDynamicJointsTrajPtMessage.point_.setSequence(points[i].point_.getSequence());
       if(this->is_traj_velocity_){
         mikDynamicJointsTrajPtMessage.point_.setField(DynamicJointsValidFieldTypes::VELOCITY);
-        mikDynamicJointsTrajPtMessage.point_.setVelocity(points[i].point_.getVelocity());
+        if(override_velocity_){
+           mikDynamicJointsTrajPtMessage.point_.setVelocity(fixed_override_);
+        } else {
+           // currently this only sends velocity 0. When actual velocites are calculated later, they should be set here.
+           mikDynamicJointsTrajPtMessage.point_.setVelocity(points[i].point_.getVelocity());
+        }
       }
-      if(this->is_traj_velocity_){
+      if(this->is_traj_duration_){
         mikDynamicJointsTrajPtMessage.point_.setField(DynamicJointsValidFieldTypes::DURATION);
         mikDynamicJointsTrajPtMessage.point_.setDuration(points[i].point_.getDuration());
       }
