@@ -75,7 +75,7 @@ void FanucSimpleCommsFaultHandler::connectionFailCB()
 
   if (!(this->getConnection()->isConnected()))
   {
-    LOG_INFO("Connection failed, attempting reconnect");
+    LOG_INFO("[Fanuc Simple Comms Fault Handler][connectionFailCB] Connection failed, attempting reconnect");
     if(!this->getConnection()->makeConnect()){
       LOG_WARN("[Fanuc Simple Comms Fault Handler][connectionFailCB] Could not reconnect.");
     }

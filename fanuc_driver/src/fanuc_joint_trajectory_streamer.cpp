@@ -153,8 +153,8 @@ void FanucJointTrajectoryStreamer::streamingThread()
 
     if(!this->connection_->isConnected()){
       while(!connection_->makeConnect()){
-        ROS_WARN("[Fanuc Trajectory Interface][setSpeedCB] Could not reconnect, retrying.");
-        sleep(0.5);
+        ROS_WARN("[Fanuc Trajectory Streamer][streaming thread] Could not reconnect, retrying.");
+        sleep(500);
       }
     }
 

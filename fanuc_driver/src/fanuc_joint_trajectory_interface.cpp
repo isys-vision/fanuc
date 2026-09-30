@@ -167,9 +167,8 @@ bool FanucJointTrajectoryInterface::setSpeedCB(industrial_msgs::SetSpeed::Reques
     ROS_WARN("Attempting robot reconnection");
     while(!connection_->makeConnect()){
     ROS_WARN("[Fanuc Trajectory Interface][setSpeedCB] Could not reconnect, retrying.");
-    sleep(1);
+    sleep(100);
     }
-
   }
 
   ROS_INFO("Sending robot speed: %d", req.speed);
