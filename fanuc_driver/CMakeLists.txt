@@ -22,6 +22,12 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+add_executable(fanuc_joint_trajectory_action 
+  src/fanuc_joint_trajectory_action.cpp
+  src/fanuc_generic_joint_trajectory_action_node.cpp)
+target_link_libraries(fanuc_joint_trajectory_action 
+  industrial_robot_client ${catkin_LIBRARIES})
+
 
 # non-swapping Fanuc specific robot state node
 add_executable(${PROJECT_NAME}_robot_state
@@ -126,6 +132,7 @@ install(TARGETS
 
   ${PROJECT_NAME}_robot_state
   ${PROJECT_NAME}_robot_state_bswap
+  fanuc_joint_trajectory_action
 
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
