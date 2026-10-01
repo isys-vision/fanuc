@@ -102,6 +102,10 @@ public:
     handle.param(prefix + "connection_info_is_traj_velocity", is_traj_velocity, is_traj_velocity);
     handle.param(prefix + "connection_info_is_traj_duration", is_traj_duration, is_traj_duration);
 
+    if (!is_traj_velocity && ros::param::param<bool>(prefix + "velocity_override", false)){
+      ROS_WARN("param velocity_override is set, but is_traj_velocity is deactivated. no velocities will be sent to robot");
+    }
+
     mikConnectionInfo.init(number_axis_trajectory, 0, number_external_axis_trajectory,
                             0, is_traj_radian, false, is_traj_velocity,
                             is_traj_duration, false);
