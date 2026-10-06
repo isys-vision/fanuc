@@ -171,19 +171,6 @@ void FanucMessageManager::spinOnce()
   }
 }
 
-int ms_per_clock;
-void mySleep(int sec)
-{
-#ifdef MOTOPLUS
-  if (ms_per_clock <= 0)
-    ms_per_clock = mpGetRtc();
-
-  mpTaskDelay(sec * 1000 / ms_per_clock);
-#else
-  sleep(sec);
-#endif
-}
-
 void FanucMessageManager::spin()
 {
   LOG_INFO("Entering message manager spin loop");

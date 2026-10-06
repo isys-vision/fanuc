@@ -93,9 +93,9 @@ bool FanucRobotStateInterface::init(SmplMsgConnection* connection, std::vector<s
 {
   this->joint_names_ = joint_names;
   this->connection_ = connection;
-  while(!connection_->makeConnect()){
+  while(!connection_->makeConnect() && ros::ok()){
     ROS_WARN("[Fanuc Robot State Interface] Could not connect to server on init. Retrying.");
-    sleep(1);
+    ros::Duration(1.0).sleep();
   }
 
   // initialize message-manager

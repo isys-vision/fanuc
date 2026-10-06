@@ -152,9 +152,9 @@ void FanucJointTrajectoryStreamer::streamingThread()
     ros::Duration(0.005).sleep();
 
     if(!this->connection_->isConnected()){
-      while(!connection_->makeConnect()){
-        ROS_WARN("[Fanuc Trajectory Streamer][streaming thread] Could not reconnect, retrying.");
-        sleep(20);
+      while(!connection_->makeConnect() && ros::ok()){
+        ROS_WARN_THROTTLE(1.0, "[Fanuc Trajectory Streamer][streaming thread] Could not reconnect, retrying.");
+        ros::Duration(0.05).sleep();
       }
     }
 
