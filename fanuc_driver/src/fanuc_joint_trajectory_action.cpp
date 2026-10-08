@@ -148,6 +148,14 @@ void FanucJointTrajectoryAction::goalCB(JointTractoryActionServer::GoalHandle gh
         ROS_WARN_NAMED(name_, "Received new goal, canceling current goal");
         abortGoal();
       }
+      // special handling to reject trajectories < 3 pts. This only makes sense in very special setups and is otherwise not desirable!
+      if(gh.getGoal()->trajectory.points.size() < 3){
+        ROS_ERROR_NAMED(name_, "Joint trajectory action failed on trajectory with less than 3 pts.");
+        control_msgs::FollowJointTrajectoryResult rslt;
+        rslt.error_code = control_msgs::FollowJointTrajectoryResult::INVALID_GOAL;
+        gh.setRejected(rslt, "Too few traj pts");
+        return;
+      }
 
       gh.setAccepted();
       active_goal_ = gh;
