@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.22.0)
 project(fanuc_lrmate200ic_moveit_plugins)
 
 set (CMAKE_CXX_EXTENSIONS FALSE)
